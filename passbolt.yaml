@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: passbolt-deployment
+  labels:
+    app: passbolt
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: passbolt
+  template:
+    metadata:
+      labels:
+        app: passbolt
+    spec:
+      containers:
+      - name: passbolt
+        image: passbolt/passbolt:latest
+        ports:
+        - containerPort: 80
+        env:
+          - name: DATASOURCES_DEFAULT_HOST
+            valueFrom:
+              configMapKeyRef:
+                name  : passbolt-configmap
+                key: database_url
+
+          - name: DATASOURCES_DEFAULT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mariadb-secret
+                key: mariadb-root-password
+
+          - name: DATASOURCES_DEFAULT_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: mariadb-secret
+                key: mariadb-user
+
+          - name: DATASOURCES_DEFAULT_DATABASE
+            valueFrom:
+              secretKeyRef:
+                name: mariadb-secret
+                key: mariadb-database
+        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: passbolt-service
+spec:
+  selector:
+    app: passbolt
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+
+

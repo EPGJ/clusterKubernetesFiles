@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: passbolt-ingress
+spec:
+  rules:
+  - host: passbolt-elias.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: passbolt-service
+            port:
+              number: 80
+  - host: test-elias.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: play-with-docker-service
+            port:
+              number: 80
+  - host: tetris-elias.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: tetris-service
+            port:
+              number: 80
